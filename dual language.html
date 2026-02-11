@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical Evolution: 神经调控减脂时代 - 无药物无肌肉流失</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- Unified Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0056b3',
+                        secondary: '#00a0e9',
+                        accent: '#00d4aa',
+                        dark: '#0a1929',
+                        light: '#f0f9ff'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .text-shadow-lg {
+                text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #0a1929 0%, #0056b3 100%);
+            }
+            .bg-gradient-teal {
+                background: linear-gradient(135deg, #0056b3 0%, #00d4aa 100%);
+            }
+            .transition-transform {
+                transition-property: transform;
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                transition-duration: 300ms;
+            }
+            .hover-scale:hover {
+                transform: scale(1.05);
+            }
+            .slide-in {
+                animation: slideIn 0.5s ease-out forwards;
+            }
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .fade-in {
+                animation: fadeIn 0.8s ease-out forwards;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+            .pulse-border {
+                animation: pulseBorder 2s infinite;
+            }
+            @keyframes pulseBorder {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(0, 86, 179, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(0, 86, 179, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(0, 86, 179, 0);
+                }
+            }
+            /* 语言切换按钮样式 */
+            .lang-btn {
+                @apply px-4 py-2 rounded-lg transition-all duration-300;
+            }
+            .lang-btn.active {
+                @apply bg-primary text-white font-semibold;
+            }
+            .lang-btn.inactive {
+                @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light font-sans" id="app-body">
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full bg-white bg-opacity-90 backdrop-blur-sm z-50 shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <span class="text-white font-bold">P</span>
+                </div>
+                <span class="font-bold text-gray-800" data-lang-key="brand_name">Physical Evolution</span>
+            </div>
+            
+            <!-- 语言切换按钮 -->
+            <div class="flex items-center space-x-3 mr-4">
+                <button id="lang-zh" class="lang-btn active" onclick="switchLanguage('zh')">
+                    中文
+                </button>
+                <button id="lang-en" class="lang-btn inactive" onclick="switchLanguage('en')">
+                    English
+                </button>
+            </div>
+            
+            <div class="hidden md:flex space-x-6">
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(0)" data-lang-key="nav_cover">封面</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(1)" data-lang-key="nav_pain_points">市场痛点</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(2)" data-lang-key="nav_core_logic">核心逻辑</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(3)" data-lang-key="nav_product">产品方案</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(4)" data-lang-key="nav_advantages">竞争优势</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(5)" data-lang-key="nav_clinical">临床证据</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(6)" data-lang-key="nav_ecosystem">生态布局</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(7)" data-lang-key="nav_business">商业模式</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(8)" data-lang-key="nav_team">核心团队</button>
+                <button class="text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(9)" data-lang-key="nav_fundraising">融资计划</button>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="md:hidden text-gray-600" id="mobileMenuBtn">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+                <div class="hidden md:flex items-center space-x-2">
+                    <span class="text-sm text-gray-500" data-lang-key="current_page">当前页面:</span>
+                    <span class="font-bold text-primary" id="currentSlide">1/10</span>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-white w-full absolute top-full left-0 shadow-md" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(0)" data-lang-key="nav_cover">封面</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(1)" data-lang-key="nav_pain_points">市场痛点</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(2)" data-lang-key="nav_core_logic">核心逻辑</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(3)" data-lang-key="nav_product">产品方案</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(4)" data-lang-key="nav_advantages">竞争优势</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(5)" data-lang-key="nav_clinical">临床证据</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(6)" data-lang-key="nav_ecosystem">生态布局</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(7)" data-lang-key="nav_business">商业模式</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(8)" data-lang-key="nav_team">核心团队</button>
+                <button class="text-left py-2 text-gray-600 hover:text-primary transition-colors" onclick="goToSlide(9)" data-lang-key="nav_fundraising">融资计划</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="pt-16">
+        <!-- Page 1: Cover -->
+        <section class="min-h-screen flex flex-col justify-center items-center px-4 py-16 bg-gradient-blue text-white">
+            <div class="container mx-auto max-w-6xl">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="md:w-1/2 mb-10 md:mb-0 text-center md:text-left">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-6 text-shadow-lg fade-in" data-lang-key="cover_title">
+                            Physical Evolution
+                        </h1>
+                        <p class="text-xl md:text-2xl mb-8 text-gray-200 fade-in" style="animation-delay: 0.2s;" data-lang-key="cover_subtitle">
+                            解锁神经调控减脂时代<br>无药物 无肌肉流失
+                        </p>
+                        <div class="text-lg md:text-xl mb-10 fade-in" style="animation-delay: 0.4s;">
+                            <p class="mb-4 italic" data-lang-key="cover_slogan1">挣脱化学束缚，重塑神经节律</p>
+                            <p class="font-bold" data-lang-key="cover_slogan2">全球首款双模神经调控（taVNS + VeNS）代谢干预系统</p>
+                        </div>
+                        <button class="bg-white text-primary font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all hover:bg-gray-100 fade-in hover-scale" style="animation-delay: 0.6s;" onclick="goToSlide(1)" data-lang-key="cover_explore">
+                            了解更多
+                        </button>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-blue-500 rounded-full opacity-20 blur-3xl animate-pulse-slow"></div>
+                            <img src="https://p6-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/a0ba32cdde5643a7afc9f2a2a3e5cf9c~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020822450248407BF39E84BE17B3AC&rrcfp=f06b921b&x-expires=1773153923&x-signature=Il3VVuVqaTXFoFfYpMI7DVvA68k%3D" 
+                                 alt="Physical Evolution Neuromodulation Device" 
+                                 class="w-64 md:w-80 object-contain z-10 relative animate-float">
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40">
+                                <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/12f56d4b642b473db16b40d390e3bac5~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020822450248407BF39E84BE17B3AC&rrcfp=f06b921b&x-expires=1773153937&x-signature=ll1vTYPoDa8X0iwSUJ2DWFo6aos%3D" 
+                                     alt="Neural Synapses & Metabolic Cycle" 
+                                     class="w-full h-full object-contain opacity-80 animate-float" style="animation-delay: 1s;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <button class="text-white opacity-70 hover:opacity-100 transition-opacity" onclick="goToSlide(1)">
+                    <i class="fa fa-chevron-down text-2xl"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Page 2: Market Pain Points -->
+        <section class="min-h-screen flex items-center px-4 py-16 bg-white">
+            <div class="container mx-auto max-w-6xl">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4" data-lang-key="pain_points_title">市场痛点</h2>
+                    <p class="text-2xl text-primary font-semibold" data-lang-key="pain_points_subtitle">戳破GLP-1泡沫</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <div class="bg-gray-50 p-8 rounded-2xl shadow-lg hover-scale transition-transform">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6" data-lang-key="pain_points_heading">药物减脂制造"瘦病人"</h3>
+                            
+                            <div class="space-y-8">
+                                <div class="flex items-start space-x-4">
+                                    <div class="bg-red-100 text-red-600 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xl font-semibold text-gray-800 mb-2" data-lang-key="pain_points_muscle">肌肉流失陷阱</h4>
+                                        <p class="text-gray-600" data-lang-key="pain_points_muscle_desc">药物减重中25%-40%为肌肉量，导致基础代谢崩盘，形成"易胖体质"</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start space-x-4">
+                                    <div class="bg-red-100 text-red-600 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i class="fa fa-medkit"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xl font-semibold text-gray-800 mb-2" data-lang-key="pain_points_gastro">肠胃毒性</h4>
+                                        <p class="text-gray-600" data-lang-key="pain_points_gastro_desc">恶心、呕吐、快感缺失导致60%以上用户一年内停药</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start space-x-4">
+                                    <div class="bg-red-100 text-red-600 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i class="fa fa-credit-card"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xl font-semibold text-gray-800 mb-2" data-lang-key="pain_points_cost">终身订阅</h4>
+                                        <p class="text-gray-600" data-lang-key="pain_points_cost_desc">停药即反弹，高昂月费成为沉重经济负担</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 p-4 bg-blue-50 border-l-4 border-primary rounded">
+                                <p class="text-gray-800 font-semibold" data-lang-key="pain_points_need">市场亟需一种<span class="text-primary">保护肌肉、无副作用、重塑内源节律</span>的颠覆性方案</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2 md:pl-10">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-blue-100 rounded-2xl transform rotate-3"></div>
+                            <div class="relative bg-white p-6 rounded-2xl shadow-xl">
+                                <img src="https://p11-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/941c4432edc04663adb06771af849ce4~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020822450248407BF39E84BE17B3AC&rrcfp=f06b921b&x-expires=1773153951&x-signature=J0cMIUDgXfhcaVIBnctFxF3RdRc%3D" 
+                                     alt="Pharmacological Weight Loss Side Effect Comparison" 
+                                     class="w-full h-auto rounded-lg">
+                                
+                                <div class="mt-6 space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-700" data-lang-key="pain_points_rebound">停药反弹率</span>
+                                        <div class="w-2/3 bg-gray-200 rounded-full h-3">
+                                            <div class="bg-red-500 h-3 rounded-full" style="width: 85%"></div>
+                                        </div>
+                                        <span class="text-red-500 font-bold">85%</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-700" data-lang-key="pain_points_discontinue">一年停药率</span>
+                                        <div class="w-2/3 bg-gray-200 rounded-full h-3">
+                                            <div class="bg-red-500 h-3 rounded-full" style="width: 60%"></div>
+                                        </div>
+                                        <span class="text-red-500 font-bold">60%+</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-gray-700" data-lang-key="pain_points_muscle_loss">肌肉流失比例</span>
+                                        <div class="w-2/3 bg-gray-200 rounded-full h-3">
+                                            <div class="bg-red-500 h-3 rounded-full" style="width: 35%"></div>
+                                        </div>
+                                        <span class="text-red-500 font-bold">25%-40%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 3: Core Logic -->
+        <section class="min-h-screen flex items-center px-4 py-16 bg-gray-50">
+            <div class="container mx-auto max-w-6xl">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4" data-lang-key="core_logic_title">核心逻辑</h2>
+                    <p class="text-2xl text-primary font-semibold" data-lang-key="core_logic_subtitle">神经调控 vs 化学干预</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                        <div class="bg-white p-8 rounded-2xl shadow-lg">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6" data-lang-key="core_logic_heading">肥胖本质是自主神经系统（ANS）失调</h3>
+                            
+                            <div class="space-y-6">
+                                <p class="text-gray-600 leading-relaxed" data-lang-key="core_logic_desc">
+                                    传统药物干预通过化学物质强行改变生理状态，而我们的方案通过神经调控技术从源头上恢复身体自然平衡
+                                </p>
+                                
+                                <div class="p-5 bg-blue-50 rounded-xl">
+                                    <h4 class="text-xl font-semibold text-gray-800 mb-3" data-lang-key="core_logic_dual_mode">双模机制</h4>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex items-start space-x-3">
+                                            <div class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                                <span class="font-bold">1</span>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-semibold text-gray-800" data-lang-key="core_logic_tavns">taVNS（经皮耳迷走神经刺激）</h5>
+                                                <p class="text-gray-600" data-lang-key="core_logic_tavns_desc">模拟饱腹感信号，在大脑层面"关闭"食欲，纠正情绪性进食</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start space-x-3">
+                                            <div class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                                <span class="font-bold">2</span>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-semibold text-gray-800" data-lang-key="core_logic_vens">VeNS（经皮前庭神经刺激）</h5>
+                                                <p class="text-gray-600" data-lang-key="core_logic_vens_desc">激活前庭交感反射，诱导棕色脂肪产热，主动"提升"基础代谢</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6 p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                                    <p class="text-gray-800 font-semibold" data-lang-key="core_logic_training">
+                                        <i class="fa fa-check-circle text-green-500 mr-2"></i>
+                                        这不是欺骗身体，而是通过神经可塑性将其"训练"回健康状态
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-blue-100 rounded-2xl transform -rotate-2"></div>
+                            <div class="relative bg-white p-6 rounded-2xl shadow-xl">
+                                <img src="https://p6-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/db2455bd15e24592b60f2cc1c116e9cd~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020822450248407BF39E84BE17B3AC&rrcfp=f06b921b&x-expires=1773153970&x-signature=nXSPOHjCLZfYIVc%2B2LDtQSikXc8%3D" 
+                                     alt="Dual-Mode Neuromodulation Mechanism" 
+                                     class="w-full h-auto rounded-lg">
+                                
+                                <div class="mt-6 grid grid-cols-2 gap-4">
+                                    <div class="bg-blue-50 p-4 rounded-lg">
+                                        <h5 class="font-semibold text-gray-800 mb-2" data-lang-key="core_logic_neuron_adv">神经调控优势</h5>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li class="flex items-center">
+                                                <i class="fa fa-check text-green-500 mr-2"></i>
+                                                <span data-lang-key="core_logic_no_side">无药物副作用</span>
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fa fa-check text-green-500 mr-2"></i>
+                                                <span data-lang-key="core_logic_muscle_protect">保护肌肉组织</span>
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fa fa-check text-green-500 mr-2"></i>
+                                                <span data-lang-key="core_logic_rhythm">重塑内源节律</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-red-50 p-4 rounded-lg">
+                                        <h5 class="font-semibold text-gray-800 mb-2" data-lang-key="core_logic_chemical_disadv">化学干预劣势</h5>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li class="flex items-center">
+                                                <i class="fa fa-times text-red-500 mr-2"></i>
+                                                <span data-lang-key="core_logic_gastro_toxic">肠胃毒性</span>
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fa fa-times text-red-500 mr-2"></i>
+                                                <span data-lang-key="core_logic_muscle_lose">大量肌肉流失</span>
+                                            </li>
+                                            <li class="flex items-center">
+                                                <i class="fa fa-times text-red-500 mr-2"></i>
+                                                <span data-lang-key="core_logic_rebound">停药体重反弹</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 4: Product Solution -->
+        <section class="min-h-screen flex items-center px-4 py-16 bg-white">
+            <div class="container mx-auto max-w-6xl">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4" data-lang-key="product_title">产品方案</h2>
+                    <p class="text-2xl text-primary font-semibold" data-lang-key="product_subtitle">24小时神经代谢闭环</p>
+                </div>
+                
+                <div class="mb-16">
+                    <div class="bg-gradient-blue rounded-3xl overflow-hidden shadow-2xl">
+                        <div class="p-8 md:p-12">
+                            <div class="flex flex-col md:flex-row items-center justify-between">
+                                <div class="md:w-1/2 mb-10 md:mb-0">
+                                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/34e01fae2c4048df973b48cd66eb9b76~tplv-a9rns2rl98-image.image?lk3s=8e244e95&rcl=2026020822450248407BF39E84BE17B3AC&rrcfp=f06b921b&x-expires=1773153991&x-signature=KBq9jcTcogis4BDb%2BdttqId6%2Brg%3D" 
+                                         alt="24-Hour Neural Metabolic Closed Loop Solution" 
+                                         class="w-full h-auto rounded-xl shadow-lg">
+                                </div>
+                                
+                                <div class="md:w-1/2 md:pl-10 text-white">
+                                    <h3 class="text-2xl font-bold mb-6" data-lang-key="product_dual_window">双时段干预系统</h3>
+                                    
+                                    <div class="space-y-8">
+                                        <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm">
+                                            <div class="flex items-center space-x-4 mb-4">
+                                                <div class="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center">
+                                                    <i class="fa fa-sun-o"></i>
+                                                </div>
+                                                <h4 class="text-xl font-semibold" data-lang-key="product_am">上午（餐前）：taVNS 刺激</h4>
+                                            </div>
+                                            <p class="text-gray-200" data-lang-key="product_am_desc">建立强效饱腹感屏障，从源头抑制食欲，避免过量进食</p>
+                                        </div>
+                                        
+                                        <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm">
+                                            <div class="flex items-center space-x-4 mb-4">
+                                                <div class="bg-blue-400 text-white w-10 h-10 rounded-full flex items-center justify-center">
+                                                    <i class="fa fa-moon-o"></i>
+                                                </div>
+                                                <h4 class="text-xl font-semibold" data-lang-key="product_pm">晚间（睡前）：VeNS 刺激</h4>
+                                            </div>
+                                            <p class="text-gray-200" data-lang-key="product_pm_desc">激活夜间燃脂引擎，优化睡眠节律，提升基础代谢</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-gray-50 p-8 rounded-2xl shadow-lg hover-scale transition-transform">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center">
+                                <i class="fa fa-headphones text-xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800" data-lang-key="product_hardware">硬件</h3>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-6" data-lang-key="product_hardware_desc">轻量化无创可穿戴设备（耳机/头带式），舒适便捷，适合日常使用</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700" data-lang-key="product_weight">重量</span>
+                                <span class="font-semibold text-gray-800">＜30g</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700" data-lang-key="product_battery">续航</span>
+                                <span class="font-semibold text-gray-800">72小时</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700" data-lang-key="product_waterproof">防水等级</span>
+                                <span class="font-semibold text-gray-800">IPX5</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-700" data-lang-key="product_connection">连接方式</span>
+                                <span class="font-semibold text-gray-800">蓝牙5.2</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-8 rounded-2xl shadow-lg hover-scale transition-transform">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center">
+                                <i class="fa fa-mobile text-xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800" data-lang-key="product_software">软件</h3>
+                        </div>
+                        
+                        <p class="text-gray-600 mb-6" data-lang-key="product_software_desc">AI节律管理APP，智能调节刺激参数，实时监测代谢状态，定制个性化方案</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-green-100 text-green-600 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="fa fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <span class="text-gray-700" data-lang-key="product_ai_program">AI个性化刺激方案</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-green-100 text-green-600 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="fa fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <span class="text-gray-700" data-lang-key="product_real_time">实时代谢状态监测</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-green-100 text-green-600 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="fa fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <span class="text-gray-700" data-lang-key="product_sleep">睡眠质量分析与优化</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-green-100 text-green-600 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <i class="fa fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <span class="text-gray-700" data-lang-key="product_data">数据可视化报告</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 5: Competitive Advantages -->
+        <section class="min-h-screen flex items-center px-4 py-16 bg-gray-50">
+            <div class="container mx-auto max-w-6xl">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4" data-lang-key="advantages_title">竞争优势</h2>
+                    <p class="text-2xl text-primary font-semibold" data-lang-key="advantages_subtitle">降维打击</p>
+                </div>
+                
+                <div class="mb-16">
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center" data-lang-key="advantages_compare">对比分析：我们的产品 vs GLP-1 vs 传统运动</h3>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-[800px]">
+                                    <thead>
+                                        <tr class="bg-gray-100">
+                                            <th class="py-4 px-6 text-left text-gray-800 font-semibold" data-lang-key="advantages_dimension">评估维度</th>
+                                            <th class="py-4 px-6 text-center text-primary font-semibold" data-lang-key="advantages_our_product">Physical Evolution<br>（神经调控）</th>
+                                            <th class="py-4 px-6 text-center text-red-500 font-semibold" data-lang-key="advantages_glp1">GLP-1<br>（药物）</th>
+                                            <th class="py-4 px-6 text-center text-yellow-500 font-semibold" data-lang-key="advantages_exercise">传统运动</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="py-4 px-6 text-gray-800 font-medium" data-lang-key="advantages_muscle_protect">肌肉保护</td>
+                                            <td class="py-4 px-6 text-center">
+                                                <div class="flex justify-center items-center">
+                                                    <i class="fa fa-check-circle text-green-500 text-xl mr-2"></i>
+                                                    <span class="text-green-600 font-semibold" data-lang-key="advantages_excellent">优秀</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1" data-lang-key="advantages_excellent_desc">激活交感产热，不影响蛋白质代谢</p>
+                                            </td>
+                                            <td class="py-4 px-6 text-center">
+                                                <div class="flex justify-center items-center">
+                                                    <i class="fa fa-times-circle text-red-500 text-xl mr-2"></i>
+                                                    <span class="text-red-600 font-semibold" data-lang-key="advantages_poor">较差</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1" data-lang-key="advantages_poor_desc">减重中25%-40%为肌肉流失</p>
+                                            </td>
+                                            <td class="py-4 px-6 text-center">
+                                                <div class="flex justify-center items-center">
+                                                    <i class="fa fa-check-circle text-yellow-500 text-xl mr-2"></i>
+                                                    <span class="text-yellow-600 font-semibold" data-lang-key="advantages_good">良好</span>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1" data-lang-key="advantages_good_desc">取决于运动强度和营养搭配</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Language Data and Core Logic -->
+    <script>
+        // 语言包 - 中英文对照
+        const languageData = {
+            zh: {
+                brand_name: "Physical Evolution",
+                nav_cover: "封面",
+                nav_pain_points: "市场痛点",
+                nav_core_logic: "核心逻辑",
+                nav_product: "产品方案",
+                nav_advantages: "竞争优势",
+                nav_clinical: "临床证据",
+                nav_ecosystem: "生态布局",
+                nav_business: "商业模式",
+                nav_team: "核心团队",
+                nav_fundraising: "融资计划",
+                current_page: "当前页面:",
+                cover_title: "Physical Evolution",
+                cover_subtitle: "解锁神经调控减脂时代<br>无药物 无肌肉流失",
+                cover_slogan1: "挣脱化学束缚，重塑神经节律",
+                cover_slogan2: "全球首款双模神经调控（taVNS + VeNS）代谢干预系统",
+                cover_explore: "了解更多",
+                pain_points_title: "市场痛点",
+                pain_points_subtitle: "戳破GLP-1泡沫",
+                pain_points_heading: "药物减脂制造\"瘦病人\"",
+                pain_points_muscle: "肌肉流失陷阱",
+                pain_points_muscle_desc: "药物减重中25%-40%为肌肉量，导致基础代谢崩盘，形成\"易胖体质\"",
+                pain_points_gastro: "肠胃毒性",
+                pain_points_gastro_desc: "恶心、呕吐、快感缺失导致60%以上用户一年内停药",
+                pain_points_cost: "终身订阅",
+                pain_points_cost_desc: "停药即反弹，高昂月费成为沉重经济负担",
+                pain_points_need: "市场亟需一种<span class=\"text-primary\">保护肌肉、无副作用、重塑内源节律</span>的颠覆性方案",
+                pain_points_rebound: "停药反弹率",
+                pain_points_discontinue: "一年停药率",
+                pain_points_muscle_loss: "肌肉流失比例",
+                core_logic_title: "核心逻辑",
+                core_logic_subtitle: "神经调控 vs 化学干预",
+                core_logic_heading: "肥胖本质是自主神经系统（ANS）失调",
+                core_logic_desc: "传统药物干预通过化学物质强行改变生理状态，而我们的方案通过神经调控技术从源头上恢复身体自然平衡",
+                core_logic_dual_mode: "双模机制",
+                core_logic_tavns: "taVNS（经皮耳迷走神经刺激）",
+                core_logic_tavns_desc: "模拟饱腹感信号，在大脑层面\"关闭\"食欲，纠正情绪性进食",
+                core_logic_vens: "VeNS（经皮前庭神经刺激）",
+                core_logic_vens_desc: "激活前庭交感反射，诱导棕色脂肪产热，主动\"提升\"基础代谢",
+                core_logic_training: "这不是欺骗身体，而是通过神经可塑性将其\"训练\"回健康状态",
+                core_logic_neuron_adv: "神经调控优势",
+                core_logic_no_side: "无药物副作用",
+                core_logic_muscle_protect: "保护肌肉组织",
+                core_logic_rhythm: "重塑内源节律",
+                core_logic_chemical_disadv: "化学干预劣势",
+                core_logic_gastro_toxic: "肠胃毒性",
+                core_logic_muscle_lose: "大量肌肉流失",
+                core_logic_rebound: "停药体重反弹",
+                product_title: "产品方案",
+                product_subtitle: "24小时神经代谢闭环",
+                product_dual_window: "双时段干预系统",
+                product_am: "上午（餐前）：taVNS 刺激",
+                product_am_desc: "建立强效饱腹感屏障，从源头抑制食欲，避免过量进食",
+                product_pm: "晚间（睡前）：VeNS 刺激",
+                product_pm_desc: "激活夜间燃脂引擎，优化睡眠节律，提升基础代谢",
+                product_hardware: "硬件",
+                product_hardware_desc: "轻量化无创可穿戴设备（耳机/头带式），舒适便捷，适合日常使用",
+                product_weight: "重量",
+                product_battery: "续航",
+                product_waterproof: "防水等级",
+                product_connection: "连接方式",
+                product_software: "软件",
+                product_software_desc: "AI节律管理APP，智能调节刺激参数，实时监测代谢状态，定制个性化方案",
+                product_ai_program: "AI个性化刺激方案",
+                product_real_time: "实时代谢状态监测",
+                product_sleep: "睡眠质量分析与优化",
+                product_data: "数据可视化报告",
+                advantages_title: "竞争优势",
+                advantages_subtitle: "降维打击",
+                advantages_compare: "对比分析：我们的产品 vs GLP-1 vs 传统运动",
+                advantages_dimension: "评估维度",
+                advantages_our_product: "Physical Evolution<br>（神经调控）",
+                advantages_glp1: "GLP-1<br>（药物）",
+                advantages_exercise: "传统运动",
+                advantages_muscle_protect: "肌肉保护",
+                advantages_excellent: "优秀",
+                advantages_excellent_desc: "激活交感产热，不影响蛋白质代谢",
+                advantages_poor: "较差",
+                advantages_poor_desc: "减重中25%-40%为肌肉流失",
+                advantages_good: "良好",
+                advantages_good_desc: "取决于运动强度和营养搭配"
+            },
+            en: {
+                brand_name: "Physical Evolution",
+                nav_cover: "Cover",
+                nav_pain_points: "Market Pain Points",
+                nav_core_logic: "Core Logic",
+                nav_product: "Product Solution",
+                nav_advantages: "Competitive Advantages",
+                nav_clinical: "Clinical Evidence",
+                nav_ecosystem: "Ecosystem Layout",
+                nav_business: "Business Model",
+                nav_team: "Core Team",
+                nav_fundraising: "Fundraising Plan",
+                current_page: "Current Page:",
+                cover_title: "Physical Evolution",
+                cover_subtitle: "Unlocking the Era of Neuro-Modulation<br>Weight Loss Without Drugs or Muscle Loss",
+                cover_slogan1: "Break free from chemical constraints, reshape neural rhythms.",
+                cover_slogan2: "World's First Dual-Mode Neuromodulation (taVNS + VeNS) Metabolic Intervention System",
+                cover_explore: "Explore More",
+                pain_points_title: "Market Pain Points",
+                pain_points_subtitle: "Bursting the GLP-1 Bubble",
+                pain_points_heading: "Pharmacological Weight Loss Creates \"Thin Patients\"",
+                pain_points_muscle: "Muscle Loss Trap",
+                pain_points_muscle_desc: "25%-40% of weight loss from drugs is muscle mass, leading to basal metabolic collapse and \"easy-fat constitution\".",
+                pain_points_gastro: "Gastrointestinal Toxicity",
+                pain_points_gastro_desc: "Nausea, vomiting, anhedonia result in over 60% of users discontinuing medication within one year.",
+                pain_points_cost: "Lifetime Subscription",
+                pain_points_cost_desc: "Weight rebounds upon discontinuation, with high monthly costs becoming a heavy financial burden.",
+                pain_points_need: "The market urgently needs a disruptive solution that <span class=\"text-primary\">protects muscle, has no side effects, and reshapes endogenous rhythms</span>.",
+                pain_points_rebound: "Rebound Rate After Discontinuation",
+                pain_points_discontinue: "Discontinuation Rate in 1 Year",
+                pain_points_muscle_loss: "Muscle Loss Ratio",
+                core_logic_title: "Core Logic",
+                core_logic_subtitle: "Neuromodulation vs. Chemical Intervention",
+                core_logic_heading: "Obesity is Essentially Autonomic Nervous System (ANS) Dysregulation",
+                core_logic_desc: "Traditional pharmacological interventions force physiological changes via chemicals, while our solution restores the body's natural balance from the source through neuromodulation technology.",
+                core_logic_dual_mode: "Dual-Mode Mechanism",
+                core_logic_tavns: "taVNS (Transcutaneous Auricular Vagus Nerve Stimulation)",
+                core_logic_tavns_desc: "Simulates satiety signals to \"turn off\" appetite at the brain level and correct emotional eating.",
+                core_logic_vens: "VeNS (Transcutaneous Vestibular Nerve Stimulation)",
+                core_logic_vens_desc: "Activates vestibulosympathetic reflex to induce brown adipose tissue thermogenesis and actively \"increase\" basal metabolism.",
+                core_logic_training: "This is not tricking the body, but \"training\" it back to health through neural plasticity.",
+                core_logic_neuron_adv: "Neuromodulation Advantages",
+                core_logic_no_side: "No drug side effects",
+                core_logic_muscle_protect: "Muscle tissue protection",
+                core_logic_rhythm: "Endogenous rhythm reshaping",
+                core_logic_chemical_disadv: "Chemical Intervention Disadvantages",
+                core_logic_gastro_toxic: "Gastrointestinal toxicity",
+                core_logic_muscle_lose: "Massive muscle loss",
+                core_logic_rebound: "Weight rebound after discontinuation",
+                product_title: "Product Solution",
+                product_subtitle: "24-Hour Neural Metabolic Closed Loop",
+                product_dual_window: "Dual-Time Window Intervention System",
+                product_am: "AM (Pre-Meal): taVNS Stimulation",
+                product_am_desc: "Establishes a strong satiety barrier to suppress appetite at the source and avoid overeating.",
+                product_pm: "PM (Pre-Sleep): VeNS Stimulation",
+                product_pm_desc: "Activates nighttime fat-burning engine, optimizes sleep rhythm, and enhances basal metabolism.",
+                product_hardware: "Hardware",
+                product_hardware_desc: "Lightweight, non-invasive wearable device (headphone/headband-style), comfortable and convenient for daily use.",
+                product_weight: "Weight",
+                product_battery: "Battery Life",
+                product_waterproof: "Waterproof Rating",
+                product_connection: "Connection",
+                product_software: "Software",
+                product_software_desc: "AI Rhythm Management App with intelligent stimulation parameter adjustment, real-time metabolic monitoring, and personalized program customization.",
+                product_ai_program: "AI-Personalized Stimulation Programs",
+                product_real_time: "Real-Time Metabolic Status Monitoring",
+                product_sleep: "Sleep Quality Analysis & Optimization",
+                product_data: "Data Visualization Reports",
+                advantages_title: "Competitive Advantages",
+                advantages_subtitle: "Dimensionality Reduction Strike",
+                advantages_compare: "Comparative Analysis: Our Product vs. GLP-1 vs. Traditional Exercise",
+                advantages_dimension: "Evaluation Dimension",
+                advantages_our_product: "Physical Evolution<br>(Neuromodulation)",
+                advantages_glp1: "GLP-1<br>(Pharmacological)",
+                advantages_exercise: "Traditional Exercise",
+                advantages_muscle_protect: "Muscle Protection",
+                advantages_excellent: "Excellent",
+                advantages_excellent_desc: "Activates sympathetic thermogenesis without affecting protein metabolism",
+                advantages_poor: "Poor",
+                advantages_poor_desc: "25%-40% of weight loss from muscle loss",
+                advantages_good: "Good",
+                advantages_good_desc: "Depends on exercise intensity and nutrition matching"
+            }
+        };
+
+        // 当前语言状态
+        let currentLang = 'zh';
+
+        // 切换语言函数
+        function switchLanguage(lang) {
+            if (lang === currentLang) return;
+            
+            // 更新语言状态
+            currentLang = lang;
+            
+            // 更新按钮样式
+            document.getElementById('lang-zh').className = lang === 'zh' ? 'lang-btn active' : 'lang-btn inactive';
+            document.getElementById('lang-en').className = lang === 'en' ? 'lang-btn active' : 'lang-btn inactive';
+            
+            // 更新页面HTML lang属性
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+            
+            // 更新所有文本内容
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (languageData[lang][key]) {
+                    // 处理包含HTML标签的内容
+                    element.innerHTML = languageData[lang][key];
+                }
+            });
+            
+            // 更新页面标题
+            if (lang === 'zh') {
+                document.title = "Physical Evolution: 神经调控减脂时代 - 无药物无肌肉流失";
+            } else {
+                document.title = "Physical Evolution: Unlocking the Era of Neuro-Modulation Weight Loss Without Drugs or Muscle Loss";
+            }
+        }
+
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Slide navigation function
+        function goToSlide(index) {
+            // Update current slide indicator
+            document.getElementById('currentSlide').textContent = `${index + 1}/10`;
+            
+            // Scroll to corresponding section (simplified implementation)
+            const sections = document.querySelectorAll('main > section');
+            if (sections[index]) {
+                sections[index].scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Close mobile menu if open
+            document.getElementById('mobileMenu').classList.add('hidden');
+        }
+
+        // Initialize current slide and language
+        document.addEventListener('DOMContentLoaded', function() {
+            goToSlide(0);
+            // 初始化语言显示
+            switchLanguage('zh');
+        });
+    </script>
+</body>
+</html>
